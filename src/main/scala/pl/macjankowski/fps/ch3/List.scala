@@ -60,4 +60,13 @@ object List {
 
   def lengthL[A](l: List[A]): Int = foldLeft(l, 0)((acc, a) => acc + 1)
 
+  def reverse[A](l: List[A]): List[A] = foldLeft(l, Nil: List[A])((acc, a) => Cons(a, acc))
+
+  def foldLeft2[A, B](l: List[A], z: B)(f: (B, A) => B): B =
+    foldRight(reverse(l), z)((a, acc) => f(acc, a))
+
+  def append[A](l1: List[A], l2: List[A]): List[A] = foldRight(l1, l2)(Cons(_, _))
+
+  def flatten[A](ll: List[List[A]]): List[A] = foldRight(ll, Nil: List[A])(append(_, _))
+
 }
