@@ -69,4 +69,29 @@ object List {
 
   def flatten[A](ll: List[List[A]]): List[A] = foldRight(ll, Nil: List[A])(append(_, _))
 
+  def addOne[A](l: List[A])(implicit n: Numeric[A]): List[A] =
+    foldRight(l, Nil: List[A])((a, acc) => Cons(n.plus(a, n.one), acc))
+
+  def addOneR[A](l: List[A])(implicit n: Numeric[A]): List[A] = l match {
+    case Nil => Nil
+    case Cons(x, xs) => Cons(n.plus(x, n.one), addOneR(xs))
+  }
+
+  def addOneRT(l: List[Int]): List[Int] = {
+
+    def go(newL: List[Int], oldL: List[Int]): List[Int] = oldL match {
+      case Nil => newL
+      case Cons(x, xs) => go(Cons(x + 1, newL), xs)
+    }
+
+    reverse(go(Nil, l))
+  }
+
+  def map[A, B](l: List[A])(f: A => B): List[B] =
+    foldRight(l, Nil: List[B])((a, acc) => Cons(f(a), acc))
+
+  def flatMap[A, B](l: List[A])(f: A => List[B]): List[B] = flatten(map(l)(f))
+
+  def filter[A](l: List[A])(f: A => Boolean): List[A] = flatMap(l)(a => if (f(a)) List(a) else Nil)
+
 }
