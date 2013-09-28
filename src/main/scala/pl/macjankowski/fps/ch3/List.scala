@@ -1,5 +1,7 @@
 package pl.macjankowski.fps.ch3
 
+import java.util.NoSuchElementException
+
 /**
  * @author "Maciej Jankowski <mac.rarry@gmail.com>"
  *
@@ -93,5 +95,30 @@ object List {
   def flatMap[A, B](l: List[A])(f: A => List[B]): List[B] = flatten(map(l)(f))
 
   def filter[A](l: List[A])(f: A => Boolean): List[A] = flatMap(l)(a => if (f(a)) List(a) else Nil)
+
+  def execFOnElemFromTwoLists[A, B](l1: List[A], l2: List[A])(f: (A, A) => B): List[B] = {
+
+    if (lengthL(l1) != lengthL(l2)) throw new NoSuchElementException
+
+    (l1, l2) match {
+      case (Nil, Nil) => Nil
+      case (Cons(x, xs), Cons(y, ys)) => Cons(f(x, y), execFOnElemFromTwoLists(xs, ys)(f))
+    }
+  }
+
+  def isPrefix[A](l: List[A], prefix: List[A]): Boolean = (l, prefix) match {
+    case (Nil, Nil) => true
+    case (Cons(x, xs), Nil) => true
+    case (Nil, Cons(x, xs)) => false
+    case (Cons(x, xs), Cons(y, ys)) => if (x != y) false else isPrefix(xs, ys)
+  }
+
+  def hasSubsequence[A](l: List[A], sub: List[A]): Boolean = {
+    if (isPrefix(l, sub)) true
+    else l match {
+      case Nil => false
+      case Cons(x, xs) => hasSubsequence(xs, sub)
+    }
+  }
 
 }
