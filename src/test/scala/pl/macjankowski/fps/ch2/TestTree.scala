@@ -29,4 +29,39 @@ class TestTree extends FunSpec with ShouldMatchers with TableDrivenPropertyCheck
       }
     }
   }
+
+  val testMax = Table(
+    ("tree", "max"),
+    (Leaf(1), 1),
+    (Branch(Leaf(2), Leaf(3)), 3),
+    (Branch(Branch(Leaf(1), Leaf(2)), Leaf(3)), 3),
+    (Branch(Branch(Leaf(1), Branch(Leaf(2), Leaf(3))), Branch(Leaf(4), Leaf(5))), 5),
+    (Branch(Branch(Leaf(11), Branch(Leaf(200), Leaf(3))), Branch(Leaf(4), Leaf(5))), 200))
+
+  describe("Tree.max") {
+
+    forAll(testMax) { (tree, max) =>
+
+      it(s"should find maximal element of a $tree and return $max") {
+        Tree.max(tree) should equal(max)
+      }
+    }
+  }
+
+  val testDepth = Table(
+    ("tree", "depth"),
+    (Leaf(1), 1),
+    (Branch(Leaf(2), Leaf(3)), 2),
+    (Branch(Branch(Leaf(1), Leaf(2)), Leaf(3)), 3),
+    (Branch(Branch(Leaf(1), Branch(Leaf(2), Leaf(3))), Branch(Leaf(4), Leaf(5))), 4))
+
+  describe("Tree.depth") {
+
+    forAll(testDepth) { (tree, depth) =>
+
+      it(s"should calculate depth of a $tree and return $depth") {
+        Tree.depth(tree) should equal(depth)
+      }
+    }
+  }
 }
