@@ -37,6 +37,6 @@ object Tree {
 
   def maxF(t: Tree[Int]): Int = fold(t, 0)(_ max _)
   
-  def sizeF(t: Tree[Int]): Int = fold(t, 0)((_, acc) => acc + 1)
+  def sizeF(t: Tree[Int]): Int = fold(t, 0)((_, acc) => acc + 1) 
 
 }
