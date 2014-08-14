@@ -21,4 +21,8 @@ class Ex6 {
     case x::xs => f(x).flatMap(e => traverse(xs)(f) map(l => e :: l))
   }
 
+  def sequenceUsingTraverse[A](a: List[Option[A]]): Option[List[A]] =
+    traverse(a)(x => x)
+
 }
+
