@@ -1,5 +1,6 @@
 package pl.macjankowski.fps.ch4
 
+
 /**
  * @author "Maciej Jankowski <mac.rarry@gmail.com>"
  *
