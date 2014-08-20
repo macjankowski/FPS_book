@@ -10,7 +10,7 @@ import pl.macjankowski.fps.ch5.Stream._
  */
 object Methods {
 
-  def nat(n: Int): Stream[Int] = cons(n, nat(n+1))
+  def nat(n: Int): Stream[Int] = cons(n, nat(n + 1))
 
   def constant[A](x: A): Stream[A] = cons(x, constant(x))
 
@@ -23,9 +23,17 @@ object Methods {
       val next: Int = x._1 + x._2
       cons(next, go((x._2, next)))
     }
-    go(0,1)
+    go(0, 1)
   }
 
   def fibsByUnfold: Stream[Int] =
-    Stream.unfold((0,1))(s => Some(s._1 + s._2, (s._2, s._1 + s._2)))
+    Stream.unfold((0, 1))(s => Some(s._1 + s._2, (s._2, s._1 + s._2)))
+
+  def fromByUnfold(n: Int): Stream[Int] =
+    Stream.unfold(n)(s => Some(s + 1, s + 1))
+
+  def constantByUnfold(n: Int): Stream[Int] =
+    Stream.unfold(n)(s => Some(s, s))
+
+  def onesByUnfold: Stream[Int] = constantByUnfold(1)
 }

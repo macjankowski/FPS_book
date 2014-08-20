@@ -10,24 +10,9 @@ import pl.macjankowski.fps.ch5.{Methods, Stream}
 import  pl.macjankowski.fps.ch5.Stream._
 
 Methods.fibs takeWhile(1000 >) foreach println
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Methods.fibsByUnfold takeWhile(1000 >) foreach println
 
-
+Methods.fibsByUnfold takeWhile(1000 >) foreach println
 
 
 

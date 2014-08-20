@@ -47,7 +47,13 @@ trait Stream[+A] {
   def flatMapByFold[B](f: A => Stream[B]): Stream[B] =
     foldRight(empty[B])((a,b) => f(a) append b)
 
+  def mapByUnfold[B](f: A => B): Stream[B]
 
+
+
+//  def takeByUnfold(n: Int): Stream[A]
+//  def takeWhileByUnfold(p: A => Boolean): Stream[A]
+//  def zipByUnfold
 
 
 }
@@ -95,6 +101,9 @@ object Stream {
       def foldRight[B](z: => B)(f: (A, => B) => B): B =
         f(hd, tl.foldRight(z)(f))
 
+
+      def mapByUnfold[B](f: A => B): Stream[B] =
+        unfold(hd)(s => Some(f(hd)))
     }
 
   def apply[A](as: A*): Stream[A] =
