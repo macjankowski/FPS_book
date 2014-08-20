@@ -7,6 +7,9 @@ package pl.macjankowski.fps.ch5
  *         Time: 16:11
  */
 trait Stream[+A] {
+
+  import Stream._
+
   def uncons: Option[(A, Stream[A])]
 
   def isEmpty: Boolean = uncons.isEmpty
@@ -23,17 +26,29 @@ trait Stream[+A] {
 
   def foldRight[B](z: => B)(f: (A, => B) => B): B
 
-  def exists(p: A => Boolean): Boolean
+  def exists(p: A => Boolean): Boolean =
+    foldRight(false)((a,b) => p(a) || b )
 
-  def forAll(p: A => Boolean): Boolean
+  def forAll(p: A => Boolean): Boolean =
+    foldRight(true)((a,b) => p(a) && b )
 
-  def takeWhileByFold(p: A => Boolean): Stream[A]
+  def takeWhileByFold(p: A => Boolean): Stream[A] =
+    foldRight(empty[A]){(a,b) =>  if(p(a)) cons(a, b) else empty[A]}
 
-  def mapByFold[B](f: A => B): Stream[B]
+  def mapByFold[B](f: A => B): Stream[B] =
+    foldRight(empty[B])((a,b) => cons(f(a), b))
 
-  def filter(p: A => Boolean): Stream[A]
+  def filter(p: A => Boolean): Stream[A] =
+    foldRight(empty[A]){(a,b) =>  if(p(a)) cons(a, b) else b}
 
-  def append[B >: A](s: Stream[B]): Stream[B]
+  def append[B >: A](s: Stream[B]): Stream[B] =
+    foldRight(s)((a,b) => cons(a, b))
+
+  def flatMapByFold[B](f: A => Stream[B]): Stream[B] =
+    foldRight(empty[B])((a,b) => f(a) append b)
+
+
+
 
 }
 
@@ -54,17 +69,6 @@ object Stream {
 
       def foldRight[B](z: => B)(f: (A, => B) => B): B = z
 
-      def exists(p: A => Boolean): Boolean = false
-
-      def forAll(p: A => Boolean): Boolean = false
-
-      def takeWhileByFold(p: A => Boolean): Stream[A] = empty[A]
-
-      def mapByFold[B](f: A => B): Stream[B] = empty[B]
-
-      def filter(p: A => Boolean): Stream[A] = empty[A]
-
-      def append[B >: A](s: Stream[B]): Stream[B] = empty[B]
     }
 
   def cons[A](hd: => A, tl: => Stream[A]): Stream[A] =
@@ -88,30 +92,18 @@ object Stream {
         tl foreach f
       }
 
-
-
-      def exists(p: A => Boolean): Boolean =
-        foldRight(false)((a,b) => p(a) || b )
-
-      def forAll(p: A => Boolean): Boolean =
-        foldRight(true)((a,b) => p(a) && b )
-
-      def takeWhileByFold(p: A => Boolean): Stream[A] =
-        foldRight(empty[A]){(a,b) =>  if(p(a)) cons(a, b) else empty[A]}
-
-      def mapByFold[B](f: A => B): Stream[B] =
-        foldRight(empty[B])((a,b) => cons(f(a), b))
-
-      def filter(p: A => Boolean): Stream[A] =
-        foldRight(empty[A]){(a,b) =>  if(p(a)) cons(a, b) else b}
-
       def foldRight[B](z: => B)(f: (A, => B) => B): B =
         f(hd, tl.foldRight(z)(f))
 
-      def append[B >: A](s: Stream[B]): Stream[B] = empty[B]
     }
 
   def apply[A](as: A*): Stream[A] =
     if (as.isEmpty) empty
     else cons(as.head, apply(as.tail: _*))
+
+  def unfold[B, S](z: S)(f: S => Option[(B, S)]): Stream[B] =
+    f(z) match {
+      case None => empty[B]
+      case Some((a,s)) => cons[B](a, unfold[B,S](s)(f))
+    }
 }

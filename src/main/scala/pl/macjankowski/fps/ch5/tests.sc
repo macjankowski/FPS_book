@@ -6,17 +6,19 @@
  */
 
 
-import  pl.macjankowski.fps.ch5.Stream
+import pl.macjankowski.fps.ch5.{Methods, Stream}
 import  pl.macjankowski.fps.ch5.Stream._
 val s = cons(1, cons(2, cons(3, empty)))
 
 
 
-val ones: Stream[Int] = cons(1, ones)
 
 
 
-val first10ones = ones take(10)
+
+
+val first10ones = Methods.ones take(10)
+
 
 
 
@@ -48,7 +50,17 @@ first10ones foreach println
 
 
 
+
+
+
+
+
+
+
+
+
 val first10tens = first10ones map (x => x+10)
+
 
 
 
@@ -80,12 +92,23 @@ first10tens foreach println
 
 
 
-val s123 = ones mapByFold (x => x*123)
 
 
 
-def nat(n: Int): Stream[Int] = cons(n, nat(n+1))
-val moreThan10 = nat(10)
+
+
+
+
+
+
+val s123 = Methods.ones mapByFold (x => x*123)
+
+
+
+
+
+val moreThan10 = Methods.nat(10)
+
 
 
 moreThan10 take(10) foreach println
@@ -107,7 +130,18 @@ moreThan10 take(10) foreach println
 
 
 
+
+
+
+
+
+
+
+
+
 val between10And30 = moreThan10 takeWhileByFold(30 >)
+
+
 
 
 
@@ -132,16 +166,50 @@ between10And30 foreach println
 
 
 
-val naturals = nat(0)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+val naturals = Methods.nat(0)
+
 
 naturals take(5) foreach println
 
 
 
 
+
+
+
+
 val even = naturals filter (x => x % 2 == 0) take(10)
 
+
 even foreach println
+
+
+
+
+
+
+
+
+
 
 
 
