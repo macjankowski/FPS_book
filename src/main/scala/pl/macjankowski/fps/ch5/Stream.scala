@@ -86,9 +86,8 @@ trait Stream[+A] {
     }
   }
 
-  def scanRight[B](acc: B)(f: (A,B) => B): Stream[B]
+  def scanRight[B](acc: B)(f: (A, => B) => B): Stream[B]
 
-  def scanRightByUnfold[B](acc: B)(f: (A, => B) => B): Stream[B]
 }
 
 object Stream {
@@ -108,9 +107,8 @@ object Stream {
 
       def foldRight[B](z: => B)(f: (A, => B) => B): B = z
 
-      def scanRight[B](acc: B)(f: (A,B) => B): Stream[B] =  empty[B]
+      def scanRight[B](acc: B)(f: (A, => B) => B): Stream[B] =  empty[B]
 
-      def scanRightByUnfold[B](acc: B)(f: (A, => B) => B): Stream[B] =  empty[B]
     }
 
   def cons[A](hd: => A, tl: => Stream[A]): Stream[A] =

@@ -5,6 +5,7 @@ import org.scalatest.prop.Checkers
 import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
 import pl.macjankowski.fps.ch5.StreamSpecification
+import pl.macjankowski.fps.ch6.RandomGenSpecification
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,8 +16,8 @@ import pl.macjankowski.fps.ch5.StreamSpecification
 @RunWith(classOf[JUnitRunner])
 class ScalaCheckRunner extends FunSuite with Checkers {
 
-  test("Stream satisfies properties"){
-    check(new StreamSpecification)
+  test("Random generator satisfies properties"){
+    check(new RandomGenSpecification)
   }
 
 }
