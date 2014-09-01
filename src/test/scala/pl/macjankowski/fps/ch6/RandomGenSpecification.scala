@@ -22,6 +22,14 @@ class RandomGenSpecification extends Properties("RandomGen") {
       RandomGen.positiveInt(rng)._1
     }
 
+  val positives2: Gen[Int] =
+    for {
+      seed <- arbitrary[Int]
+    } yield {
+      val rng = RNG.simple(seed)
+      RandomGen.positiveInt2(rng)._1
+    }
+
   val doubles: Gen[Double] =
     for {
       seed <- arbitrary[Int]
@@ -52,25 +60,29 @@ class RandomGenSpecification extends Properties("RandomGen") {
     (pInt: Int) => pInt >= 0
   }
 
-  property("doubles between 0 and one exclusive") = forAll(doubles) {
-    (d: Double) =>
-      (d >= 0) :| "generated double is below zero" &&
-        (d < 1) :| "generated double is above or equal one"
+  property("positive integers 2") = forAll(positives2) {
+    (pInt: Int) => pInt >= 0
   }
 
-  property("double2: doubles between 0 and one exclusive") = forAll(doubles2) {
-    (rand: Rand[Double]) =>
-      val (d, _) = rand(RNG.simple(100))
-      (d >= 0) :| "generated double is below zero" &&
-        (d < 1) :| "generated double is above or equal one"
-  }
+//  property("doubles between 0 and one exclusive") = forAll(doubles) {
+//    (d: Double) =>
+//      (d >= 0) :| "generated double is below zero" &&
+//        (d < 1) :| "generated double is above or equal one"
+//  }
+//
+//  property("double2: doubles between 0 and one exclusive") = forAll(doubles2) {
+//    (rand: Rand[Double]) =>
+//      val (d, _) = rand(RNG.simple(100))
+//      (d >= 0) :| "generated double is below zero" &&
+//        (d < 1) :| "generated double is above or equal one"
+//  }
 
-  property("positive max") = forAll(positivesMax) {
-    (x: (Int, Rand[Int])) => x match {
-      case (n, rand) =>
-        val (x, _) = rand(RNG.simple(100))
-        (x >= 0) :| "generated int is below zero" &&
-          (x <= n) :| "generated int is above max"
-    }
-  }
+//  property("positive max") = forAll(positivesMax) {
+//    (x: (Int, Rand[Int])) => x match {
+//      case (n, rand) =>
+//        val (x, _) = rand(RNG.simple(100))
+//        (x >= 0) :| "generated int is below zero" &&
+//          (x <= n) :| "generated int is above max"
+//    }
+//  }
 }

@@ -18,7 +18,7 @@ import pl.macjankowski.fps.other.TestMethods
 class ScalaCheckRunner extends FunSuite with Checkers {
 
   test("Random generator satisfies properties"){
-    check(new TestMethods)
+//    check(new TestMethods)
     check(new RandomGenSpecification)
   }
 

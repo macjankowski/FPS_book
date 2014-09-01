@@ -7,8 +7,8 @@ package pl.macjankowski.fps.other
  *         Time: 14:45
  */
 object Methods {
-  def isSubList[A](short: List[A], long: List[A]): Boolean =
-    long.tails exists (_.startsWith(short))
+//  def isSubList[A](short: List[A], long: List[A]): Boolean =
+//    long.tails exists (_.startsWith(short))
 
   def isSubList[A](short: List[A], long: List[A]): Boolean = {
     val sLong = long.toStream
