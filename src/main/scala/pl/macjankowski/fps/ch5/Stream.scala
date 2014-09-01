@@ -8,6 +8,8 @@ package pl.macjankowski.fps.ch5
  */
 trait Stream[+A] {
 
+  type State[A] = Option[(A, Stream[A])]
+
   import Stream._
 
   def uncons: Option[(A, Stream[A])]
@@ -88,6 +90,17 @@ trait Stream[+A] {
 
   def scanRight[B](acc: B)(f: (A, => B) => B): Stream[B]
 
+  def tails: Stream[Stream[A]] =
+    unfold(this.uncons: State[A])(s => s map{case (h,t) => (cons(h,t), t.uncons)})
+
+//  def startsWith[A](s: Stream[A]): Boolean =
+//    zipByUnfold(s)
+
+
+//  def hasSubsequence[A](s1: Stream[A], s2: Stream[A]): Boolean =
+//    s1.tails exists (startsWith(_,s2))
+
+  override def toString = take(10).toList.toString()
 }
 
 object Stream {
@@ -142,6 +155,8 @@ object Stream {
           case None => cons(f(hd, acc), cons(acc, ps))
         }
       }
+
+
 
     }
 

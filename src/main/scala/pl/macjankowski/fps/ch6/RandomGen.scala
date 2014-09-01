@@ -1,5 +1,7 @@
 package pl.macjankowski.fps.ch6
 
+import pl.macjankowski.fps.ch2.Currying
+
 /**
  * Created with IntelliJ IDEA.
  * @author Maciej Jankowski <maciej.jankowski@ser-solutions.pl>
@@ -65,4 +67,13 @@ object RandomGen {
 
   def double2: Rand[Double] =
     map(positiveMax(Int.MaxValue-1))(_.toDouble / Int.MaxValue.toDouble)
+
+  def map2[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = {
+    rng => {
+      val (a, rng2) = ra(rng)
+      val (b, rng3) = rb(rng2)
+      (f(a,b), rng3)
+    }
+  }
+
 }

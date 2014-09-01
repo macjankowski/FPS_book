@@ -4,7 +4,7 @@ package pl.macjankowski.fps.ch2
  * @author "Maciej Jankowski <mac.rarry@gmail.com>"
  *
  */
-class Currying {
+object Currying {
 
   def partial1[A, B, C](a: A, f: (A, B) => C): B => C = (b: B) => f(a, b)
 
