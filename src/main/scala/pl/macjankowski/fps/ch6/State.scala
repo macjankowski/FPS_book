@@ -9,14 +9,21 @@ package pl.macjankowski.fps.ch6
  */
 
 object State {
-
+  def sequence[A, S](fs: List[State[S, A]]): State[S, List[A]] = fs match {
+    case Nil => State(s => (Nil, s))
+    case f :: tail =>
+      State(s => {
+        val (a, newS) = f.run(s)
+        val (l, lastRng) = sequence(tail).run(newS)
+        (a :: l, lastRng)
+      })
+  }
 }
-
 
 
 case class State[S, +A](run: S => (A, S)) {
 
-  def unit: State[S, A] = State(rng => run(rng))
+  def unit: State[S, A] = State(s => run(s))
 
   def map[C](f: A => C): State[S, C] =
     State(s => {
@@ -39,15 +46,6 @@ case class State[S, +A](run: S => (A, S)) {
     })
   }
 
-  def sequence[B >: A](fs: List[State[S, B]]): State[S, List[B]] = fs match {
-    case Nil => State(s => (Nil, s))
-    case f :: tail =>
-      State(s => {
-        val (a, newS) = f.run(s)
-        val (l, lastRng) = sequence(tail).run(newS)
-        (a :: l, lastRng)
-      })
-  }
 
   def filter(p: A => Boolean): State[S, A] = this
 
@@ -57,5 +55,15 @@ case class State[S, +A](run: S => (A, S)) {
       (f(a), s)
     })
   }
+
+  def get: State[S, S] = State(s => (s, s))
+
+  def set(value: S): State[S, Unit] = State(s => (Unit, value))
+
+  def modify(f: S => S): State[S, Unit] = for {
+    s <- get
+    _ <- set(f(s))
+  } yield ()
+
 
 }
