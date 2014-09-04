@@ -47,7 +47,7 @@ object RandomGen2 {
     ((d1, d2, d3), rng4)
   }
 
-  def ints(count: Int): State[RNG, List[Int]] = {
+  def ints(count: Int): Rand[List[Int]] = {
 
     State(rng =>
       if (count > 0) {
@@ -135,14 +135,7 @@ object RandomGen2 {
     )
   }
 
-//  def filter[A](ra: Rand[A])(p: A => Boolean): Rand[A] =
-//    flatMap(State(_.nextInt)) {
-//      n =>
-//        State(rng => {
-//          if (n != Int.MinValue) (n.abs, rng)
-//          else positiveInt2.run(rng)
-//        })
-//    }
+
 
 }
 
