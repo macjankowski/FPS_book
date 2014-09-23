@@ -16,10 +16,14 @@ val inputs = List(Coin, Turn, Coin, Turn, Coin, Turn, Coin, Turn)
 val state = Machine.simulateMachine(inputs)
 
 
+
+
 val (coins, s) = state.run(m)
 
 
+
 println(s.coins)
+
 
 
 println("1")

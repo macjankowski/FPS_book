@@ -37,7 +37,9 @@ object Machine {
 
     def rec(m: State[Machine, Unit], inputs: List[Input]): State[Machine, Unit] = inputs match {
       case Nil => m
-      case x :: xs => rec(m.modify(transition(x)), xs)
+      case x :: xs =>
+        val newM = m.modify(transition(x))
+        rec(newM, xs)
     }
 
     val startState = State[Machine, Unit](m => (Unit, m))
