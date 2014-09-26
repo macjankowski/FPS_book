@@ -19,17 +19,8 @@ val ret = for {
 } yield xs.map(_ % y)
 
 
+
 println(ret.run(RNG.simple(123l)))
-
-
-
-println("n has value ")
-
-
-
-
-
-
 
 
 
