@@ -8,28 +8,15 @@
 
 import  pl.macjankowski.fps.ch5.Stream
 import  pl.macjankowski.fps.ch5.Stream._
+
 val s = cons(1, cons(2, cons(3, empty)))
-
-
-
-
 
 val t = cons(5, cons(6, cons(7, empty)))
 
 
-
-
-
 val z = t.append(s)
 
-
-
-
 z foreach println
-
-
-
-
 
 
 
@@ -40,13 +27,35 @@ def nat(n: Int): Stream[Int] = cons(n, nat(n+1))
 def nextThree(n: Int): Stream[Int] = nat(n) takeWhile(n+3 >)
 
 
-
 nextThree(12) foreach println
 
 
+val stream: Stream[Int] = s flatMapByFold (x => nextThree(x))
+
+stream foreach println
 
 
-s flatMapByFold (x => nextThree(x)) foreach println
+
+
+
+
+
+
+val newS = stream mapByUnfold(x => x * 3)
+
+newS foreach println
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

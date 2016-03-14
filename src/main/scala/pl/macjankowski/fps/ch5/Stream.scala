@@ -8,6 +8,8 @@ package pl.macjankowski.fps.ch5
  */
 trait Stream[+A] {
 
+  type State[A] = Option[(A, Stream[A])]
+
   import Stream._
 
   def uncons: Option[(A, Stream[A])]
@@ -51,15 +53,54 @@ trait Stream[+A] {
   def flatMapByFold[B](f: A => Stream[B]): Stream[B] =
     foldRight(empty[B])((a, b) => f(a) append b)
 
-  //  def mapByUnfold[B](f: A => B): Stream[B]
+  def mapByUnfold[B](f: A => B): Stream[B] =
+    unfold(uncons: Option[(A, Stream[A])])(s =>
+      s map {
+        case (hd, tl) => (f(hd), tl.uncons)
+      }
+    )
+
+  def takeByUnfold(n: Int): Stream[A] =
+    unfold(n, (uncons: Option[(A, Stream[A])])) {
+      case (k, s) =>
+        if (k > 0) s.map {
+          case (hd, tl) => (hd, (k - 1, tl.uncons))
+        }
+        else None
+    }
 
 
-  //  def takeByUnfold(n: Int): Stream[A]
-  //  def takeWhileByUnfold(p: A => Boolean): Stream[A]
-  //  def zipByUnfold
+  def takeWhileByUnfold(p: A => Boolean): Stream[A] =
+    unfold(uncons: Option[(A, Stream[A])])(s =>
+      s.filter(x => p(x._1)).map {
+        case (hd, tl) => (hd, tl.uncons)
+      }
+    )
 
-  def scanRight[B](z: B)(f: (A, B) => B): Stream[B]
 
+  def zipByUnfold[B](s: Stream[B]): Stream[(A, B)] = {
+    unfold((this, s)){
+      case (sA,sB) => (sA.uncons, sB.uncons) match {
+        case (Some((a, tsA)), Some((b, tsB))) => Some(((a,b), (tsA, tsB)))
+        case _ => None
+      }
+      case _ =>  None
+    }
+  }
+
+  def scanRight[B](acc: B)(f: (A, => B) => B): Stream[B]
+
+  def tails: Stream[Stream[A]] =
+    unfold(this.uncons: State[A])(s => s map{case (h,t) => (cons(h,t), t.uncons)})
+
+//  def startsWith[A](s: Stream[A]): Boolean =
+//    zipByUnfold(s)
+
+
+//  def hasSubsequence[A](s1: Stream[A], s2: Stream[A]): Boolean =
+//    s1.tails exists (startsWith(_,s2))
+
+  override def toString = take(10).toList.toString()
 }
 
 object Stream {
@@ -79,7 +120,8 @@ object Stream {
 
       def foldRight[B](z: => B)(f: (A, => B) => B): B = z
 
-      def scanRight[B](z: B)(f: (A, B) => B): Stream[B] = empty[B]
+      def scanRight[B](acc: B)(f: (A, => B) => B): Stream[B] =  empty[B]
+
     }
 
   def cons[A](hd: => A, tl: => Stream[A]): Stream[A] =
@@ -106,20 +148,16 @@ object Stream {
       def foldRight[B](z: => B)(f: (A, => B) => B): B =
         f(hd, tl.foldRight(z)(f))
 
-
-      //      def mapByUnfold[B](f: A => B): Stream[B] =
-      //        unfold(hd)(s => Some(f(hd)))
-
-      def scanRight[B](z: B)(f: (A, B) => B): Stream[B] = {
-
-        def go(z: B)(s: Stream[A])(g: (A, B, Stream[A]) => Stream[B]): Stream[B] =
-          g(hd, z, s)
-
-        go(z)(cons(hd, tl))((a, b, s) => s.uncons match {
-          case None => empty[B]
-          case Some((h, t)) => cons(f(a, b), cons(h, t).scanRight(z)(f))
-        })
+      def scanRight[B](acc: B)(f: (A, => B) => B): Stream[B] =  {
+        val ps = tl.scanRight(acc)(f)
+        ps.uncons match {
+          case Some((h,t)) => cons(f(hd, h), ps)
+          case None => cons(f(hd, acc), cons(acc, ps))
+        }
       }
+
+
+
     }
 
   def apply[A](as: A*): Stream[A] =
@@ -131,6 +169,4 @@ object Stream {
       case None => empty[B]
       case Some((a, s)) => cons[B](a, unfold[B, S](s)(f))
     }
-
-
 }

@@ -15,6 +15,17 @@ import scala.collection.immutable.Range.Inclusive
 @RunWith(classOf[JUnitRunner])
 class StreamSpecification extends Properties("Stream") {
 
+  val streams: Gen[Stream[Int]] = {
+
+    for{
+      size <- Gen.choose(10, 100)
+    } yield {
+      val inclusive: Inclusive = 0 to size
+      val op = (a: Int, b:Stream[Int]) => Stream.cons(a, b)
+      inclusive.foldRight(Stream.empty[Int])(op)
+    }
+
+  }
 
   val propConcatLists = forAll { (l1: List[Int], l2: List[Int]) =>
     l1.size + l2.size == (l1 ::: l2).size }
@@ -25,23 +36,13 @@ class StreamSpecification extends Properties("Stream") {
       s map (x => x) equals s
   }
 
-  property("map toList") = forAll(streams) {
-    (s: Stream[Int]) =>
-      println(s)
-      val l = s.toList
-      s.uncons.map(el => el._1).fold(false)(x => x == l.head)
-  }
+//  property("map toList") = forAll(streams) {
+//    (s: Stream[Int]) =>
+//      println(s)
+//      val l = s.toList
+//      s.uncons.map(el => el._1).fold(false)(x => x == l.head)
+//  }
 
-  val streams: Gen[Stream[Int]] = {
 
-    for{
-      size <- Gen.choose(0, 100)
-    } yield {
-      val inclusive: Inclusive = 0 to size
-      val op: (Int, Stream[Int]) => Stream[Int] = (a, b) => Stream.cons(a, b)
-      inclusive.foldRight(Stream.empty[Int])(op)
-    }
-
-  }
 
 }
