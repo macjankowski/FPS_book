@@ -51,6 +51,7 @@ s flatMapByFold (x => nextThree(x)) foreach println
 
 
 
+s.scanRight(0: Int)((a: Int,b:Int) => a + b).foreach(println )
 
 
 
