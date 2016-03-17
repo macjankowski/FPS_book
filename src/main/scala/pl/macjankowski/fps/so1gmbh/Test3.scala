@@ -45,7 +45,7 @@ object Test3 {
     }
     //sortedIntervals foreach println
     val merged = merge(sortedIntervals)
-    //merged foreach println
+    merged foreach println
     merged.length
   }
 
